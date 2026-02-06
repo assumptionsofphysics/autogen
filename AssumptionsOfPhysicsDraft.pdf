@@ -1,138 +1,522 @@
-#!/bin/bash
-#
-#  _          _                  ___        _ _
-# | |    __ _| |_ _____  __     / _ \ _ __ | (_)_ __   ___
-# | |   / _` | __/ _ \ \/ /____| | | | '_ \| | | '_ \ / _ \
-# | |___ (_| | |_  __/>  <_____| |_| | | | | | | | | |  __/
-# |_____\__,_|\__\___/_/\_\     \___/|_| |_|_|_|_| |_|\___|
-#
-# WEB Site: latex.aslushnikov.com
-# Issues/bugs: https://github.com/aslushnikov/latex-online
-#
-# Command-line interface for latex-online service
-#
-
-function cleanup {
-    rm $dumpHeaders 2>/dev/null
-    rm $outputFile 2>/dev/null
-    rm $tarball 2>/dev/null
-}
-
-function usage {
-   echo "Usage:
-  bash $0 [-d host] [-o output] [-g] main.tex [file1] [file2]...
-
-Description:
-  This is a command line interface for Latex-Online service.
-
-Options:
-  -d HOST - use custom HOST instead of latexonline.cc
-  -h, --help - show this help
-  -g - pass git tracked files instead of file1, file2, etc.
-  -o - output filename or, if a directory name is given, where
-      to put the file with a default name
-  -f - force compiling. Will recompile file not relying on cache
-  -c - select compiler command. Available options are lualatex, xelatex and pdflatex (default)
-
-Examples:
-  1. If you've got a simple tex file FOO.TEX that doesn't rely on any other files.
-  You can compile it via command
-      laton FOO.TEX
-
-  2. If you're including image MY_KITTY.JPG in FOO.TEX
-      laton FOO.TEX MY_KITTY.JPG
-
-  3. If you've got a git repo that includes plenty of different
-  images/tex/other files, and main file like DIPLOMA.TEX, then
-      laton -g DIPLOMA.TEX
-
-Please file all questions, bugs and feature requests to https://github.com/aslushnikov/latex-online
-">&2
-}
-
-trap cleanup EXIT
-
-if (( $# < 1 )); then
-    usage
-    exit 1
-fi
-
-if  [[ ($1 == '-h') || ($1 == '--help') ]]; then
-    usage
-    exit 1;
-fi
-
-host="https://texlive2020.latexonline.cc"
-command="pdflatex"
-GIT_TRACKED=false
-while getopts "fd:c:go:" flag
-do
-    if [ $flag == "d" ]; then
-        host=$OPTARG
-    elif [[ $flag == "c" ]]; then
-        if [[ $OPTARG =~ "pdflatex"|"xelatex"|"lualatex" ]]; then
-            command=$OPTARG
-        else
-            echo "Only pdflatex, xelatex and lualatex compilers are supported."
-            exit 1
-        fi
-    elif [[ $flag == "g" ]]; then
-        GIT_TRACKED=true
-    elif [[ $flag == "o" ]]; then
-        OUTPUT=$OPTARG
-    elif [[ $flag == "f" ]]; then
-        FORCE=true
-    fi
-done
-
-shift $((OPTIND-1))
-target=$1
-shift
-base=$(basename $target)
-extension=${base##*.}
-pdfFileName=${base%.*}.pdf
-
-if [[ $OUTPUT ]]; then
-    # if it is a directory, then append path
-    if [[ -d $OUTPUT ]]; then
-        pdfFileName=${OUTPUT%/}/$pdfFileName
-    else
-        pdfFileName=${OUTPUT%/}
-    fi
-fi
-
-if [ $extension != "tex" ];
-then
-    echo "Only files with .tex extensions are allowed"
-    exit 1
-fi
-
-tarball=`mktemp latexTarball-XXXXXX`
-if [[ $GIT_TRACKED == true ]]; then
-    supportingFiles=`git ls-files`
-else
-    supportingFiles=$@
-fi
-tar -cj $target $supportingFiles > $tarball
-
-# create tmp file for headers
-dumpHeaders=`mktemp latexCurlHeaders-XXXXXX`
-outputFile=`mktemp latexCurlOutput-XXXXXX`
-curl -L --post301 --post302 --post303 -D $dumpHeaders -F file=@$tarball "$host/data?target=$target&force=$FORCE&command=$command" > $outputFile
-
-httpResponse=`cat $dumpHeaders | grep ^HTTP | tail -1 | cut -f 2 -d ' '`
-
-if [[ $httpResponse != 2* ]];
-then
-    echo Errors during compiling TeX document: $httpResponse
-    # if so then output is not pdfFile but plain text one with errors
-    # trap will clean the file
-    cat $outputFile >&2
-    exit 1
-    # and we should remove it after
-else
-    cp $outputFile $pdfFileName
-    echo Success! $pdfFileName is written
-fi
-
-
+pdflatex -interaction nonstopmode -recorder -output-directory latex.out /tmp/downloads/tmp_21/book.tex
+/tmp/downloads/tmp_21/book.tex: warning: [pgfplots] running in backwards compatibility mode (unsuitable tick labels; missing features). Consider writing \pgfplotsset{compat=1.14} into your preamble
+/tmp/downloads/tmp_21/book.tex:104: warning: Overfull \hbox (34.60373pt too wide) (page 5)
+reverse-classical-mechanics.tex:84: warning: Reference `rp-cm-EulerLagrange' on page 8 undefined
+reverse-classical-mechanics.tex:91: warning: Reference `rp-cm-EulerLagrange' on page 9 undefined
+reverse-classical-mechanics.tex: warning: Underfull \vbox (badness 2376) while \output is active (page 10)
+reverse-classical-mechanics.tex:175: warning: Reference `rp-cm-fig-photon' on page 11 undefined
+reverse-classical-mechanics.tex:187: warning: Reference `assum_kineq' on page 11 undefined
+reverse-classical-mechanics.tex:194: warning: Reference `assum_kineq' on page 11 undefined
+reverse-classical-mechanics.tex:194: warning: Reference `assum_kineq' on page 11 undefined
+reverse-classical-mechanics.tex:194: warning: Reference `assum_kineq' on page 11 undefined
+reverse-classical-mechanics.tex:196: warning: Reference `assum_kineq' on page 11 undefined
+reverse-classical-mechanics.tex:200: warning: Reference `assum_kineq' on page 11 undefined
+reverse-classical-mechanics.tex:200: warning: Reference `assum_kineq' on page 11 undefined
+reverse-classical-mechanics.tex:204: warning: Reference `assum_kineq' on page 12 undefined
+reverse-classical-mechanics.tex:204: warning: Reference `assum_kineq' on page 12 undefined
+reverse-classical-mechanics.tex:206: warning: Reference `assum_kineq' on page 12 undefined
+reverse-classical-mechanics.tex:211: warning: Reference `rp-cm-fig-vennDiagramEarly' on page 12 undefined
+reverse-classical-mechanics.tex:228: warning: Reference `assum_kineq' on page 12 undefined
+reverse-classical-mechanics.tex:238: warning: Reference `assum_kineq' on page 13 undefined
+reverse-classical-mechanics.tex:245: warning: Reference `rp-cm-fig-dragEvolution' on page 13 undefined
+reverse-classical-mechanics.tex:322: warning: Overfull \hbox (1.78185pt too wide) (page 13)
+reverse-classical-mechanics.tex:330: warning: Reference `rp-cm-EulerLagrange' on page 13 undefined
+reverse-classical-mechanics.tex:346: warning: Reference `rp-cm-HamiltonEq' on page 14 undefined
+reverse-classical-mechanics.tex:361: warning: Reference `rp-cm-fig-dragDynamics' on page 14 undefined
+reverse-classical-mechanics.tex:456: warning: Reference `rp-cm-momentumHamiltonian' on page 14 undefined
+reverse-classical-mechanics.tex:456: warning: Reference `rp-cm-fig-dragVariableMass' on page 14 undefined
+reverse-classical-mechanics.tex:552: warning: Reference `assum_kineq' on page 16 undefined
+reverse-classical-mechanics.tex:660: warning: Reference `rp-cm-hm-condEquations' on page 19 undefined
+reverse-classical-mechanics.tex:666: warning: Reference `rp-cm-fig-HamiltonianRotation' on page 20 undefined
+reverse-classical-mechanics.tex:666: warning: Reference `rp-cm-hm-condGeneralizedEquations' on page 20 undefined
+reverse-classical-mechanics.tex:666: warning: Reference `rp-cm-hm-condEquations' on page 20 undefined
+reverse-classical-mechanics.tex:675: warning: Reference `rp-cm-displacementCurl' on page 20 undefined
+reverse-classical-mechanics.tex:679: warning: Reference `rp-cm-fig-HamiltonianFlow' on page 20 undefined
+reverse-classical-mechanics.tex:685: warning: Reference `rp-cm-hm-condEquations' on page 21 undefined
+reverse-classical-mechanics.tex:689: warning: Reference `rp-cm-hm-condEquations' on page 21 undefined
+reverse-classical-mechanics.tex:735: warning: Reference `rp-cm-hm-condEquations' on page 21 undefined
+reverse-classical-mechanics.tex:735: warning: Reference `rp-cm-hm-condGeneralizedEquations' on page 21 undefined
+reverse-classical-mechanics.tex:772: warning: Reference `rp-cm-dr-condDivergenceDisplacement' on page 22 undefined
+reverse-classical-mechanics.tex: warning: `h' float specifier changed to `ht'
+reverse-classical-mechanics.tex:780: warning: Reference `rp-cm-dr-condConservedVolume' on page 22 undefined
+reverse-classical-mechanics.tex:786: warning: Reference `rp-cm-fig-areaDensityConservation' on page 22 undefined
+reverse-classical-mechanics.tex:836: warning: Reference `rp-cm-di-condConservedSymplectic' on page 24 undefined
+reverse-classical-mechanics.tex:852: warning: Reference `rp-cm-dr-condDivergenceDisplacement' on page 24 undefined
+reverse-classical-mechanics.tex:852: warning: Reference `rp-cm-hm-condGeneralizedEquations' on page 24 undefined
+reverse-classical-mechanics.tex:854: warning: Reference `rp-cm-hm-condEquations' on page 24 undefined
+reverse-classical-mechanics.tex:854: warning: Reference `rp-cm-hm-condGeneralizedEquations' on page 24 undefined
+reverse-classical-mechanics.tex:854: warning: Reference `rp-cm-dr-condDivergenceDisplacement' on page 24 undefined
+reverse-classical-mechanics.tex:854: warning: Reference `rp-cm-dr-condUnitaryJacobian' on page 24 undefined
+reverse-classical-mechanics.tex:854: warning: Reference `rp-cm-dr-condConservedVolume' on page 24 undefined
+reverse-classical-mechanics.tex:854: warning: Reference `rp-cm-dr-condConservedDensity' on page 24 undefined
+reverse-classical-mechanics.tex:854: warning: Reference `rp-cm-di-condConservedSymplectic' on page 24 undefined
+reverse-classical-mechanics.tex:854: warning: Reference `rp-cm-di-condConservedPoisson' on page 24 undefined
+reverse-classical-mechanics.tex:854: warning: Reference `rp-cm-di-condCurlRotatedDisplacement' on page 24 undefined
+reverse-classical-mechanics.tex:858: warning: Reference `rp-cm-dr-condDivergenceDisplacement' on page 24 undefined
+reverse-classical-mechanics.tex:858: warning: Reference `rp-cm-dr-condConservedVolume' on page 24 undefined
+reverse-classical-mechanics.tex:858: warning: Reference `rp-cm-dr-condConservedDensity' on page 24 undefined
+reverse-classical-mechanics.tex:858: warning: Reference `rp-cm-hm-condEquations' on page 24 undefined
+reverse-classical-mechanics.tex:867: warning: Reference `rp-cm-dr-condDetRev' on page 25 undefined
+reverse-classical-mechanics.tex:867: warning: Reference `rp-cm-dr-condConservedVolume' on page 25 undefined
+reverse-classical-mechanics.tex:867: warning: Reference `rp-cm-dr-condConservedDensity' on page 25 undefined
+reverse-classical-mechanics.tex:871: warning: Reference `rp-cm-dr-condDetRev' on page 25 undefined
+reverse-classical-mechanics.tex:882: warning: Reference `rp-cm-volumeTransformation1d' on page 26 undefined
+reverse-classical-mechanics.tex:882: warning: Reference `rp-cm-densityTransformation1d' on page 26 undefined
+reverse-classical-mechanics.tex:897: warning: Reference `rp-cm-dr-condUnitaryJacobian' on page 26 undefined
+reverse-classical-mechanics.tex:917: warning: Reference `rp-cm-dr-condUnitaryJacobian' on page 27 undefined
+reverse-classical-mechanics.tex:940: warning: Reference `assum_detrev' on page 28 undefined
+reverse-classical-mechanics.tex:940: warning: Reference `assum_detrev' on page 28 undefined
+reverse-classical-mechanics.tex:976: warning: Reference `rp-cm-hm-condNEquations' on page 28 undefined
+reverse-classical-mechanics.tex:982: warning: Reference `rp-cm-hm-condGeneralizedEquations' on page 28 undefined
+reverse-classical-mechanics.tex:984: warning: Reference `rp-cm-dr-condDivergenceDisplacement' on page 28 undefined
+reverse-classical-mechanics.tex:984: warning: Reference `rp-cm-dr-condUnitaryJacobian' on page 28 undefined
+reverse-classical-mechanics.tex:984: warning: Reference `rp-cm-dr-condConservedVolume' on page 28 undefined
+reverse-classical-mechanics.tex:984: warning: Reference `rp-cm-dr-condConservedDensity' on page 28 undefined
+reverse-classical-mechanics.tex:1003: warning: Reference `rp-cm-hm-condNEquations' on page 29 undefined
+reverse-classical-mechanics.tex:1003: warning: Reference `rp-cm-dr-condDivergenceDisplacement' on page 29 undefined
+reverse-classical-mechanics.tex:1003: warning: Reference `rp-cm-dr-condUnitaryJacobian' on page 29 undefined
+reverse-classical-mechanics.tex:1003: warning: Reference `rp-cm-dr-condConservedVolume' on page 29 undefined
+reverse-classical-mechanics.tex:1003: warning: Reference `rp-cm-dr-condConservedDensity' on page 29 undefined
+reverse-classical-mechanics.tex:1003: warning: Reference `rp-cm-hm-condNEquations' on page 29 undefined
+reverse-classical-mechanics.tex:1003: warning: Reference `rp-cm-dr-condDivergenceDisplacement' on page 29 undefined
+reverse-classical-mechanics.tex:1003: warning: Reference `rp-cm-dr-condUnitaryJacobian' on page 29 undefined
+reverse-classical-mechanics.tex:1003: warning: Reference `rp-cm-dr-condConservedVolume' on page 29 undefined
+reverse-classical-mechanics.tex:1003: warning: Reference `rp-cm-dr-condConservedDensity' on page 29 undefined
+reverse-classical-mechanics.tex:1005: warning: Reference `rp-cm-di-condConservedSymplectic' on page 29 undefined
+reverse-classical-mechanics.tex:1024: warning: Reference `rp-cm-di-condCurlRotatedDisplacement' on page 29 undefined
+reverse-classical-mechanics.tex:1024: warning: Reference `rp-cm-di-condCurlRotatedDisplacement' on page 29 undefined
+reverse-classical-mechanics.tex:1024: warning: Reference `rp-cm-di-condConservedSymplectic' on page 29 undefined
+reverse-classical-mechanics.tex:1034: warning: Reference `rp-cm-hm-condNEquations' on page 29 undefined
+reverse-classical-mechanics.tex:1034: warning: Reference `rp-cm-di-condCurlRotatedDisplacement' on page 29 undefined
+reverse-classical-mechanics.tex:1034: warning: Reference `rp-cm-di-condConservedSymplectic' on page 29 undefined
+reverse-classical-mechanics.tex:1036: warning: Reference `rp-cm-di-condConservedPoisson' on page 29 undefined
+reverse-classical-mechanics.tex:1036: warning: Reference `rp-cm-di-condConservedSymplectic' on page 29 undefined
+reverse-classical-mechanics.tex:1038: warning: Reference `rp-cm-hm-condNEquations' on page 29 undefined
+reverse-classical-mechanics.tex:1038: warning: Reference `rp-cm-hm-condGeneralizedEquations' on page 29 undefined
+reverse-classical-mechanics.tex:1038: warning: Reference `rp-cm-di-condConservedSymplectic' on page 29 undefined
+reverse-classical-mechanics.tex:1038: warning: Reference `rp-cm-di-condConservedPoisson' on page 29 undefined
+reverse-classical-mechanics.tex:1038: warning: Reference `rp-cm-di-condCurlRotatedDisplacement' on page 29 undefined
+reverse-classical-mechanics.tex:1038: warning: Reference `rp-cm-dr-condDivergenceDisplacement' on page 29 undefined
+reverse-classical-mechanics.tex:1038: warning: Reference `rp-cm-dr-condUnitaryJacobian' on page 29 undefined
+reverse-classical-mechanics.tex:1038: warning: Reference `rp-cm-dr-condConservedVolume' on page 29 undefined
+reverse-classical-mechanics.tex:1038: warning: Reference `rp-cm-dr-condConservedDensity' on page 29 undefined
+reverse-classical-mechanics.tex:1040: warning: Reference `rp-cm-di-condConservedSymplectic' on page 30 undefined
+reverse-classical-mechanics.tex:1042: warning: Reference `rp-cm-sf-symplecticForm' on page 30 undefined
+reverse-classical-mechanics.tex:1056: warning: Reference `rp-cm-dr-condConservedVolume' on page 30 undefined
+reverse-classical-mechanics.tex:1056: warning: Reference `rp-cm-dr-condConservedVolume' on page 30 undefined
+reverse-classical-mechanics.tex:1069: warning: Reference `rp-cm-dr-condDivergenceDisplacement' on page 31 undefined
+reverse-classical-mechanics.tex:1069: warning: Reference `rp-cm-dr-condConservedVolume' on page 31 undefined
+reverse-classical-mechanics.tex:1073: warning: Reference `rp-cm-di-condCurlRotatedDisplacement' on page 31 undefined
+reverse-classical-mechanics.tex:1073: warning: Reference `rp-cm-di-condConservedSymplectic' on page 31 undefined
+reverse-classical-mechanics.tex:1073: warning: Reference `rp-cm-hm-condNEquations' on page 31 undefined
+reverse-classical-mechanics.tex:1075: warning: Reference `rp-cm-dr-condDetRev' on page 31 undefined
+reverse-classical-mechanics.tex:1075: warning: Reference `rp-cm-dr-condThermoRev' on page 31 undefined
+reverse-classical-mechanics.tex:1075: warning: Reference `rp-cm-dr-condInformation' on page 31 undefined
+reverse-classical-mechanics.tex:1075: warning: Reference `rp-cm-dr-condUncertainty' on page 31 undefined
+reverse-classical-mechanics.tex:1075: warning: Reference `rp-cm-dr-condConservedVolume' on page 31 undefined
+reverse-classical-mechanics.tex:1075: warning: Reference `rp-cm-dr-condUnitaryJacobian' on page 31 undefined
+reverse-classical-mechanics.tex:1075: warning: Reference `assum_detrev' on page 31 undefined
+reverse-classical-mechanics.tex:1075: warning: Reference `rp-cm-di-condConservedSymplectic' on page 31 undefined
+reverse-classical-mechanics.tex:1075: warning: Reference `rp-cm-dr-condConservedVolume' on page 31 undefined
+reverse-classical-mechanics.tex:1108: warning: Reference `rp-cm-ind-condIndepDof' on page 33 undefined
+reverse-classical-mechanics.tex:1108: warning: Reference `rp-cm-ind-condIndepDistr' on page 33 undefined
+reverse-classical-mechanics.tex:1108: warning: Reference `rp-cm-ind-condIndepDistr' on page 33 undefined
+reverse-classical-mechanics.tex:1108: warning: Reference `rp-cm-ind-condIndepEntropy' on page 33 undefined
+reverse-classical-mechanics.tex:1108: warning: Reference `rp-cm-ind-condIndepDistr' on page 33 undefined
+reverse-classical-mechanics.tex:1108: warning: Reference `rp-cm-ind-condIndepUncertainty' on page 33 undefined
+reverse-classical-mechanics.tex:1110: warning: Reference `assum_detrev' on page 33 undefined
+reverse-classical-mechanics.tex:1136: warning: Reference `rp-cm-ind-condIndepDof' on page 34 undefined
+reverse-classical-mechanics.tex:1136: warning: Reference `rp-cm-ind-condIndepDistr' on page 34 undefined
+reverse-classical-mechanics.tex:1136: warning: Reference `rp-cm-ind-condIndepEntropy' on page 34 undefined
+reverse-classical-mechanics.tex:1137: warning: Reference `rp-cm-ind-condIndepUncertainty' on page 34 undefined
+reverse-classical-mechanics.tex:1137: warning: Reference `rp-cm-hm-condNEquations' on page 34 undefined
+reverse-classical-mechanics.tex:1137: warning: Reference `assum_indep' on page 34 undefined
+reverse-classical-mechanics.tex:1137: warning: Reference `assum_detrev' on page 34 undefined
+reverse-classical-mechanics.tex:1137: warning: Reference `assum_indep' on page 34 undefined
+reverse-classical-mechanics.tex:1137: warning: Reference `rp-cm-hm-condNEquations' on page 34 undefined
+reverse-classical-mechanics.tex:1139: warning: Reference `assum_indep' on page 34 undefined
+reverse-classical-mechanics.tex:1139: warning: Reference `assum_detrev' on page 34 undefined
+reverse-classical-mechanics.tex:1141: warning: Overfull \hbox (0.35764pt too wide) (page 34)
+reverse-classical-mechanics.tex:1145: warning: Reference `assum_indep' on page 35 undefined
+reverse-classical-mechanics.tex:1145: warning: Reference `assum_detrev' on page 35 undefined
+reverse-classical-mechanics.tex:1152: warning: Reference `assum_detrev' on page 35 undefined
+reverse-classical-mechanics.tex:1296: warning: Overfull \hbox (2.92014pt too wide) (page 41)
+reverse-classical-mechanics.tex:1298: warning: Reference `rp-cm-generalizedStokes' on page 41 undefined
+reverse-classical-mechanics.tex:1298: warning: Reference `rp-cm-gradientTheorem' on page 41 undefined
+reverse-classical-mechanics.tex:1298: warning: Reference `rp-cm-curlTheorem' on page 41 undefined
+reverse-classical-mechanics.tex:1298: warning: Reference `rp-cm-divergenceTheorem' on page 41 undefined
+reverse-classical-mechanics.tex:1352: warning: Reference `assum_kineq' on page 44 undefined
+reverse-classical-mechanics.tex:1352: warning: Reference `assum_kineq' on page 44 undefined
+reverse-classical-mechanics.tex:1356: warning: Reference `rp-cm-sec-inequivalenceOfFormulations' on page 44 undefined
+reverse-classical-mechanics.tex:1356: warning: Reference `assum_kineq' on page 44 undefined
+reverse-classical-mechanics.tex:1356: warning: Reference `assum_detrev' on page 44 undefined
+reverse-classical-mechanics.tex:1356: warning: Reference `assum_indep' on page 44 undefined
+reverse-classical-mechanics.tex:1356: warning: Reference `assum_kineq' on page 44 undefined
+reverse-classical-mechanics.tex:1356: warning: Reference `assum_kineq' on page 44 undefined
+reverse-classical-mechanics.tex:1383: warning: Reference `assum_kineq' on page 45 undefined
+reverse-classical-mechanics.tex:1397: warning: Reference `rp-cm-wke-condVelocityFromMomentum' on page 45 undefined
+reverse-classical-mechanics.tex:1412: warning: Reference `assum_kineq' on page 45 undefined
+reverse-classical-mechanics.tex:1426: warning: Reference `rp-cm-EulerLagrange' on page 46 undefined
+reverse-classical-mechanics.tex:1474: warning: Reference `rp-cm-hm-condGeneralizedEquations' on page 46 undefined
+reverse-classical-mechanics.tex:1504: warning: Reference `rp-cm-hm-extPSEquation' on page 47 undefined
+reverse-classical-mechanics.tex:1578: warning: Reference `assum_detrev' on page 48 undefined
+reverse-classical-mechanics.tex:1582: warning: Reference `rp-cm-displacementFormComponents' on page 48 undefined
+reverse-classical-mechanics.tex:1582: warning: Reference `assum_detrev' on page 48 undefined
+reverse-classical-mechanics.tex:1616: warning: Reference `assum_detrev' on page 49 undefined
+reverse-classical-mechanics.tex:1646: warning: Reference `rp-cm-LagrangianGaugeChange' on page 50 undefined
+reverse-classical-mechanics.tex:1658: warning: Reference `rp-cm-LagrangianGaugeChange' on page 50 undefined
+reverse-classical-mechanics.tex:1673: warning: Reference `assum_kineq' on page 51 undefined
+reverse-classical-mechanics.tex:1673: warning: Reference `assum_kineq' on page 51 undefined
+reverse-classical-mechanics.tex:1679: warning: Reference `rp-cm-sf-contactForm' on page 51 undefined
+reverse-classical-mechanics.tex:1679: warning: Reference `rp-cm-sf-symplecticForm' on page 51 undefined
+reverse-classical-mechanics.tex:1694: warning: Reference `rp-cm-potenialConditions' on page 52 undefined
+reverse-classical-mechanics.tex:1696: warning: Reference `rp-cm-formPotential' on page 52 undefined
+reverse-classical-mechanics.tex:1698: warning: Reference `rp-cm-sf-contactForm' on page 52 undefined
+reverse-classical-mechanics.tex:1698: warning: Reference `assum_detrev' on page 52 undefined
+reverse-classical-mechanics.tex:1698: warning: Reference `assum_indep' on page 52 undefined
+reverse-classical-mechanics.tex:1698: warning: Reference `rp-cm-formPotential' on page 52 undefined
+reverse-classical-mechanics.tex:1700: warning: Reference `rp-cm-sf-contactForm' on page 52 undefined
+reverse-classical-mechanics.tex:1707: warning: Reference `assum_detrev' on page 52 undefined
+reverse-classical-mechanics.tex:1707: warning: Reference `assum_indep' on page 52 undefined
+reverse-classical-mechanics.tex:1707: warning: Reference `assum_detrev' on page 52 undefined
+reverse-classical-mechanics.tex:1718: warning: Reference `assum_detrev' on page 52 undefined
+reverse-classical-mechanics.tex:1720: warning: Reference `assum_detrev' on page 53 undefined
+reverse-classical-mechanics.tex:1720: warning: Reference `assum_indep' on page 53 undefined
+reverse-classical-mechanics.tex:1730: warning: Reference `assum_kineq' on page 53 undefined
+reverse-classical-mechanics.tex:1730: warning: Reference `rp-cm-wke-condVelocityFromMomentum' on page 53 undefined
+reverse-classical-mechanics.tex:1730: warning: Reference `assum_kineq' on page 53 undefined
+reverse-classical-mechanics.tex:1734: warning: Reference `rp-cm-wke-condVelocityFromMomentum' on page 53 undefined
+reverse-classical-mechanics.tex:1746: warning: Reference `rp-cm-metricTensor' on page 53 undefined
+reverse-classical-mechanics.tex:1772: warning: Reference `rp-cm-JacobianMomentumVelocity' on page 54 undefined
+reverse-classical-mechanics.tex:1779: warning: Reference `rp-cm-fke-condLinearRelationship' on page 54 undefined
+reverse-classical-mechanics.tex:1779: warning: Reference `rp-cm-fke-condMassiveParticle' on page 54 undefined
+reverse-classical-mechanics.tex:1814: warning: Reference `rp-cm-fke-condLinearRelationship' on page 56 undefined
+reverse-classical-mechanics.tex:1821: warning: Reference `assum_kineq' on page 56 undefined
+reverse-classical-mechanics.tex:1830: warning: Reference `rp-cm-fke-condLinearRelationship' on page 57 undefined
+reverse-classical-mechanics.tex:1832: warning: Reference `rp-cm-fke-condLinearRelationship' on page 57 undefined
+reverse-classical-mechanics.tex:1832: warning: Reference `assum_kineq' on page 57 undefined
+reverse-classical-mechanics.tex:1832: warning: Reference `assum_kineq' on page 57 undefined
+reverse-classical-mechanics.tex:1837: warning: Reference `rp-cm-fke-condLinearRelationship' on page 57 undefined
+reverse-classical-mechanics.tex:1837: warning: Reference `assum_kineq' on page 57 undefined
+reverse-classical-mechanics.tex:1893: warning: Reference `rp-cm-energyTimeComponent' on page 58 undefined
+reverse-classical-mechanics.tex:2004: warning: Reference `rp-cm-spatialPythagoras' on page 62 undefined
+reverse-classical-mechanics.tex:2004: warning: Reference `rp-cm-spacetimePythagoras' on page 62 undefined
+reverse-classical-mechanics.tex:2011: warning: Reference `assum_detrev' on page 63 undefined
+reverse-classical-mechanics.tex:2011: warning: Reference `assum_indep' on page 63 undefined
+reverse-classical-mechanics.tex:2015: warning: Reference `assum_kineq' on page 63 undefined
+reverse-classical-mechanics.tex:2019: warning: Reference `assum_kineq' on page 63 undefined
+reverse-classical-mechanics.tex:2064: warning: Overfull \hbox (54.73524pt too wide) (page 64)
+reverse-classical-mechanics.tex:2179: warning: Reference `assum_kineq' on page 66 undefined
+reverse-classical-mechanics.tex:2181: warning: Reference `assum_detrev' on page 67 undefined
+reverse-classical-mechanics.tex:2181: warning: Reference `assum_indep' on page 67 undefined
+reverse-classical-mechanics.tex:2181: warning: Reference `assum_kineq' on page 67 undefined
+reverse-classical-mechanics.tex:2250: warning: Reference `rp-cm-kinematicSymplecticForm' on page 68 undefined
+reverse-classical-mechanics.tex:2255: warning: Reference `rp-cm-metricTensorDeterminantIsJacobianForDensities' on page 68 undefined
+reverse-classical-mechanics.tex:2255: warning: Reference `rp-cm-fke-condDensitiesOfPosition' on page 68 undefined
+reverse-classical-mechanics.tex:2269: warning: Reference `assum_detrev' on page 69 undefined
+reverse-classical-mechanics.tex:2269: warning: Reference `assum_indep' on page 69 undefined
+reverse-classical-mechanics.tex:2269: warning: Reference `assum_kineq' on page 69 undefined
+reverse-classical-mechanics.tex:2278: warning: Reference `assum_kineq' on page 70 undefined
+reverse-classical-mechanics.tex:2345: warning: Reference `rp-cm-ps-condMomentumCovector' on page 70 undefined
+reverse-classical-mechanics.tex:2418: warning: Reference `rp-cm-ps-condMomentumCovector' on page 71 undefined
+reverse-classical-mechanics.tex:2418: warning: Reference `rp-cm-ps-condInvarianceSF' on page 71 undefined
+reverse-classical-mechanics.tex:2425: warning: Reference `rp-cm-ps-condInvarianceSF' on page 71 undefined
+reverse-classical-mechanics.tex:2427: warning: Reference `rp-cm-ps-condInvarianceSF' on page 71 undefined
+reverse-classical-mechanics.tex:2436: warning: Reference `assum_indep' on page 71 undefined
+reverse-classical-mechanics.tex:2438: warning: Reference `rp-cm-ps-condInvarianceSF' on page 71 undefined
+reverse-classical-mechanics.tex:2453: warning: Reference `assum_detrev' on page 72 undefined
+reverse-classical-mechanics.tex:2453: warning: Reference `assum_indep' on page 72 undefined
+reverse-classical-mechanics.tex:2484: warning: Reference `assum_detrev' on page 73 undefined
+reverse-classical-mechanics.tex:2503: warning: Reference `assum_indep' on page 75 undefined
+reverse-classical-mechanics.tex:2507: warning: Reference `assum_indep' on page 75 undefined
+reverse-classical-mechanics.tex:2507: warning: Reference `assum_indep' on page 75 undefined
+reverse-classical-mechanics.tex:2511: warning: Reference `rp-cm-ps-condInvarianceSF' on page 75 undefined
+reverse-classical-mechanics.tex:2511: warning: Reference `rp-cm-ps-condMomentumCovector' on page 75 undefined
+reverse-classical-mechanics.tex:2511: warning: Reference `rp-cm-ps-condInvariancePoisson' on page 75 undefined
+reverse-classical-mechanics.tex:2518: warning: Reference `rp-cm-fke-condUnits' on page 75 undefined
+reverse-classical-mechanics.tex:2518: warning: Reference `assum_kineq' on page 75 undefined
+reverse-classical-mechanics.tex:2518: warning: Reference `rp-cm-fke-condLinearRelationship' on page 75 undefined
+reverse-classical-mechanics.tex:2518: warning: Reference `rp-cm-wke-condVelocityFromMomentum' on page 75 undefined
+reverse-classical-mechanics.tex:2518: warning: Reference `assum_kineq' on page 75 undefined
+reverse-classical-mechanics.tex:2520: warning: Reference `assum_kineq' on page 76 undefined
+reverse-classical-mechanics.tex:2534: warning: Reference `rp-cm-di-condConservedSymplectic' on page 77 undefined
+reverse-classical-mechanics.tex:2540: warning: Reference `rp-cm-dr-condUncertainty' on page 77 undefined
+reverse-classical-mechanics.tex:2549: warning: Reference `assum_kineq' on page 77 undefined
+reverse-classical-mechanics.tex:2549: warning: Reference `assum_kineq' on page 77 undefined
+reverse-classical-mechanics.tex:2601: warning: Reference `rp-cm-gaugeChange' on page 79 undefined
+reverse-classical-mechanics.tex:2601: warning: Reference `rp-cm-momentumUnderUnitChange' on page 79 undefined
+reverse-classical-mechanics.tex:2603: warning: Reference `assum_kineq' on page 79 undefined
+reverse-classical-mechanics.tex:2611: warning: Reference `assum_detrev' on page 79 undefined
+reverse-classical-mechanics.tex:2613: warning: Reference `assum_detrev' on page 80 undefined
+reverse-classical-mechanics.tex:2613: warning: Reference `assum_kineq' on page 80 undefined
+reverse-classical-mechanics.tex:2619: warning: Reference `assum_kineq' on page 80 undefined
+reverse-classical-mechanics.tex:2623: warning: Reference `assum_detrev' on page 80 undefined
+reverse-classical-mechanics.tex:2623: warning: Reference `assum_indep' on page 80 undefined
+reverse-classical-mechanics.tex:2623: warning: Reference `assum_kineq' on page 80 undefined
+reverse-classical-mechanics.tex:2623: warning: Reference `assum_detrev' on page 80 undefined
+reverse-classical-mechanics.tex:2623: warning: Reference `assum_indep' on page 80 undefined
+reverse-classical-mechanics.tex:2623: warning: Reference `assum_kineq' on page 80 undefined
+reverse-classical-mechanics.tex:2625: warning: Reference `assum_kineq' on page 80 undefined
+reverse-classical-mechanics.tex:2627: warning: Reference `assum_indep' on page 80 undefined
+reverse-classical-mechanics.tex:2627: warning: Reference `assum_detrev' on page 80 undefined
+reverse-classical-mechanics.tex:2627: warning: Reference `assum_detrev' on page 80 undefined
+reverse-classical-mechanics.tex:2629: warning: Reference `assum_indep' on page 81 undefined
+reverse-classical-mechanics.tex:2629: warning: Reference `assum_kineq' on page 81 undefined
+reverse-classical-mechanics.tex:2629: warning: Reference `assum_indep' on page 81 undefined
+reverse-classical-mechanics.tex:2629: warning: Reference `assum_kineq' on page 81 undefined
+reverse-classical-mechanics.tex:2631: warning: Reference `rp-cm-fke-condUnits' on page 81 undefined
+reverse-classical-mechanics.tex:2631: warning: Reference `rp-cm-fke-condInertial' on page 81 undefined
+/tmp/downloads/tmp_21/book.tex:2870: warning: Reference `assum_indep' on page 91 undefined
+/tmp/downloads/tmp_21/book.tex:2870: warning: Reference `rp-cm-ir-condDistributionOverPhaseSpace' on page 91 undefined
+/tmp/downloads/tmp_21/book.tex:2872: warning: Reference `rp-cm-ir-condDistributionOverPhaseSpace' on page 91 undefined
+/tmp/downloads/tmp_21/book.tex:2872: warning: Reference `rp-cm-ir-condMadeOfInfinitesimalParts' on page 91 undefined
+/tmp/downloads/tmp_21/book.tex:2878: warning: Reference `assum_infirr' on page 91 undefined
+/tmp/downloads/tmp_21/book.tex:2878: warning: Reference `assum_infirr' on page 91 undefined
+/tmp/downloads/tmp_21/book.tex:2878: warning: Reference `assum_indep' on page 91 undefined
+/tmp/downloads/tmp_21/book.tex:2878: warning: Reference `assum_detrev' on page 91 undefined
+/tmp/downloads/tmp_21/book.tex:2878: warning: Reference `assum_infirr' on page 91 undefined
+/tmp/downloads/tmp_21/book.tex:2878: warning: Reference `assum_indep' on page 91 undefined
+/tmp/downloads/tmp_21/book.tex:2878: warning: Reference `assum_kineq' on page 91 undefined
+/tmp/downloads/tmp_21/book.tex:2878: warning: Reference `assum_infirr' on page 91 undefined
+/tmp/downloads/tmp_21/book.tex:2878: warning: Reference `assum_indep' on page 91 undefined
+/tmp/downloads/tmp_21/book.tex:2878: warning: Reference `assum_detrev' on page 91 undefined
+/tmp/downloads/tmp_21/book.tex:2878: warning: Reference `assum_kineq' on page 91 undefined
+/tmp/downloads/tmp_21/book.tex:2945: warning: Reference `rp-cm-classicalUncertaintyPrinciple' on page 93 undefined
+/tmp/downloads/tmp_21/book.tex:2958: warning: Reference `assum_infirr' on page 94 undefined
+/tmp/downloads/tmp_21/book.tex:2960: warning: Reference `assum_indep' on page 94 undefined
+/tmp/downloads/tmp_21/book.tex:2963: warning: Reference `assum_kineq' on page 94 undefined
+/tmp/downloads/tmp_21/book.tex:2966: warning: Reference `assum_detrev' on page 94 undefined
+/tmp/downloads/tmp_21/book.tex:2968: warning: Reference `assum_kineq' on page 94 undefined
+/tmp/downloads/tmp_21/book.tex:2968: warning: Reference `assum_detrev' on page 94 undefined
+/tmp/downloads/tmp_21/book.tex:2972: warning: Reference `assum_infirr' on page 94 undefined
+/tmp/downloads/tmp_21/book.tex:2974: warning: Reference `assum_indep' on page 94 undefined
+/tmp/downloads/tmp_21/book.tex:2976: warning: Reference `assum_detrev' on page 95 undefined
+/tmp/downloads/tmp_21/book.tex:2978: warning: Reference `assum_kineq' on page 95 undefined
+/tmp/downloads/tmp_21/book.tex:2978: warning: Reference `assum_detrev' on page 95 undefined
+/tmp/downloads/tmp_21/book.tex:2980: warning: Reference `assum_detrev' on page 96 undefined
+/tmp/downloads/tmp_21/book.tex:2980: warning: Reference `assum_kineq' on page 96 undefined
+/tmp/downloads/tmp_21/book.tex: warning: No file pm_VerifiableStatements.tex.tex
+/tmp/downloads/tmp_21/book.tex: warning: No file pm_CombinedDomains.tex.tex
+/tmp/downloads/tmp_21/book.tex: warning: No file pm_PropertiesQuantities.tex.tex
+pm_EnsembleSpaces.tex: warning: Underfull \vbox (badness 3471) while \output is active (page 101)
+pm_EnsembleSpaces.tex:155: warning: Reference `mdf@pagelabel-1' on page 107 undefined
+pm_EnsembleSpaces.tex:183: warning: Reference `mdf@pagelabel-2' on page 108 undefined
+pm_EnsembleSpaces.tex: warning: Underfull \vbox (badness 10000) while \output is active (page 108)
+pm_EnsembleSpaces.tex:197: warning: Reference `mdf@pagelabel-3' on page 109 undefined
+pm_EnsembleSpaces.tex:237: warning: Reference `mdf@pagelabel-4' on page 109 undefined
+pm_EnsembleSpaces.tex:237: warning: Reference `mdf@pagelabel-5' on page 110 undefined
+pm_EnsembleSpaces.tex:253: warning: Reference `mdf@pagelabel-6' on page 110 undefined
+pm_EnsembleSpaces.tex:253: warning: Reference `mdf@pagelabel-7' on page 111 undefined
+pm_EnsembleSpaces.tex:295: warning: Reference `mdf@pagelabel-8' on page 111 undefined
+pm_EnsembleSpaces.tex:295: warning: Reference `mdf@pagelabel-9' on page 112 undefined
+pm_EnsembleSpaces.tex:309: warning: Reference `mdf@pagelabel-10' on page 112 undefined
+pm_EnsembleSpaces.tex:327: warning: Reference `pm-es-conjSubmixturesConverge' on page 113 undefined
+pm_EnsembleSpaces.tex:398: warning: Reference `mdf@pagelabel-11' on page 113 undefined
+pm_EnsembleSpaces.tex:398: warning: Reference `mdf@pagelabel-12' on page 114 undefined
+pm_EnsembleSpaces.tex:455: warning: Reference `mdf@pagelabel-13' on page 114 undefined
+pm_EnsembleSpaces.tex:455: warning: Reference `mdf@pagelabel-14' on page 115 undefined
+pm_EnsembleSpaces.tex:457: warning: Reference `pm-es-conjSubmixturesConverge' on page 115 undefined
+pm_EnsembleSpaces.tex:457: warning: Reference `pm-es-conjAlgebraicInteriorSigmaConvex' on page 115 undefined
+pm_EnsembleSpaces.tex:540: warning: Reference `mdf@pagelabel-15' on page 116 undefined
+pm_EnsembleSpaces.tex:540: warning: Reference `mdf@pagelabel-16' on page 117 undefined
+pm_EnsembleSpaces.tex:594: warning: Reference `mdf@pagelabel-17' on page 117 undefined
+pm_EnsembleSpaces.tex:594: warning: Reference `mdf@pagelabel-18' on page 118 undefined
+pm_EnsembleSpaces.tex:645: warning: Reference `mdf@pagelabel-19' on page 118 undefined
+pm_EnsembleSpaces.tex:726: warning: Reference `pm-es-fig-monodecomposability' on page 119 undefined
+pm_EnsembleSpaces.tex:785: warning: Reference `pm-es-separateExtendsMixtures' on page 119 undefined
+pm_EnsembleSpaces.tex:789: warning: Reference `mdf@pagelabel-20' on page 119 undefined
+pm_EnsembleSpaces.tex:789: warning: Reference `mdf@pagelabel-21' on page 120 undefined
+pm_EnsembleSpaces.tex:789: warning: Reference `mdf@pagelabel-22' on page 121 undefined
+pm_EnsembleSpaces.tex:809: warning: Reference `mdf@pagelabel-23' on page 121 undefined
+pm_EnsembleSpaces.tex:855: warning: Reference `pm-es-hullProp' on page 121 undefined
+pm_EnsembleSpaces.tex:916: warning: Reference `mdf@pagelabel-24' on page 121 undefined
+pm_EnsembleSpaces.tex:916: warning: Reference `mdf@pagelabel-25' on page 122 undefined
+pm_EnsembleSpaces.tex:916: warning: Reference `mdf@pagelabel-26' on page 123 undefined
+pm_EnsembleSpaces.tex:916: warning: Reference `mdf@pagelabel-27' on page 124 undefined
+pm_EnsembleSpaces.tex:954: warning: Overfull \hbox (1.25298pt too wide) (page 125)
+pm_EnsembleSpaces.tex:992: warning: Reference `mdf@pagelabel-28' on page 125 undefined
+pm_EnsembleSpaces.tex:992: warning: Reference `mdf@pagelabel-29' on page 126 undefined
+pm_EnsembleSpaces.tex:1003: warning: Reference `mdf@pagelabel-30' on page 126 undefined
+pm_EnsembleSpaces.tex:1035: warning: Reference `pm-es-entropyUnique' on page 127 undefined
+pm_EnsembleSpaces.tex:1039: warning: Reference `mdf@pagelabel-31' on page 127 undefined
+pm_EnsembleSpaces.tex:1039: warning: Reference `mdf@pagelabel-32' on page 128 undefined
+pm_EnsembleSpaces.tex:1039: warning: Reference `mdf@pagelabel-33' on page 129 undefined
+pm_EnsembleSpaces.tex:1045: warning: Overfull \hbox (0.56009pt too wide) (page 129)
+pm_EnsembleSpaces.tex:1138: warning: Reference `mdf@pagelabel-34' on page 129 undefined
+pm_EnsembleSpaces.tex:1138: warning: Reference `mdf@pagelabel-35' on page 130 undefined
+pm_EnsembleSpaces.tex:1138: warning: Reference `mdf@pagelabel-36' on page 131 undefined
+pm_EnsembleSpaces.tex:1210: warning: Reference `mdf@pagelabel-37' on page 131 undefined
+pm_EnsembleSpaces.tex:1210: warning: Reference `mdf@pagelabel-38' on page 132 undefined
+pm_EnsembleSpaces.tex:1210: warning: Reference `mdf@pagelabel-39' on page 133 undefined
+pm_EnsembleSpaces.tex:1244: warning: Reference `mdf@pagelabel-40' on page 134 undefined
+pm_EnsembleSpaces.tex:1244: warning: Reference `mdf@pagelabel-41' on page 135 undefined
+pm_EnsembleSpaces.tex:1266: warning: Reference `mdf@pagelabel-42' on page 135 undefined
+pm_EnsembleSpaces.tex:1280: warning: Reference `pm-es-orthoProps' on page 135 undefined
+pm_EnsembleSpaces.tex:1282: warning: Reference `mdf@pagelabel-43' on page 135 undefined
+pm_EnsembleSpaces.tex: warning: Underfull \vbox (badness 3471) while \output is active (page 135)
+pm_EnsembleSpaces.tex:1376: warning: Reference `mdf@pagelabel-44' on page 136 undefined
+pm_EnsembleSpaces.tex:1376: warning: Reference `mdf@pagelabel-45' on page 137 undefined
+pm_EnsembleSpaces.tex:1376: warning: Reference `mdf@pagelabel-46' on page 138 undefined
+pm_EnsembleSpaces.tex:1396: warning: Reference `mdf@pagelabel-47' on page 138 undefined
+pm_EnsembleSpaces.tex: warning: Underfull \vbox (badness 10000) while \output is active (page 138)
+pm_EnsembleSpaces.tex:1445: warning: Reference `pm-es-vectorJustification' on page 139 undefined
+pm_EnsembleSpaces.tex:1451: warning: Reference `pm-es-vectorJustification' on page 139 undefined
+pm_EnsembleSpaces.tex:1610: warning: Reference `mdf@pagelabel-48' on page 139 undefined
+pm_EnsembleSpaces.tex:1610: warning: Reference `mdf@pagelabel-49' on page 140 undefined
+pm_EnsembleSpaces.tex:1610: warning: Reference `mdf@pagelabel-50' on page 141 undefined
+pm_EnsembleSpaces.tex:1610: warning: Reference `mdf@pagelabel-51' on page 142 undefined
+pm_EnsembleSpaces.tex:1610: warning: Reference `mdf@pagelabel-52' on page 143 undefined
+pm_EnsembleSpaces.tex:1610: warning: Reference `mdf@pagelabel-53' on page 144 undefined
+pm_EnsembleSpaces.tex:1646: warning: Reference `mdf@pagelabel-54' on page 145 undefined
+pm_EnsembleSpaces.tex:1679: warning: Reference `pm-es-directionallyBound' on page 145 undefined
+pm_EnsembleSpaces.tex:1803: warning: Reference `mdf@pagelabel-55' on page 146 undefined
+pm_EnsembleSpaces.tex:1803: warning: Reference `mdf@pagelabel-56' on page 147 undefined
+pm_EnsembleSpaces.tex:1803: warning: Reference `mdf@pagelabel-57' on page 148 undefined
+pm_EnsembleSpaces.tex:1815: warning: Reference `mdf@pagelabel-58' on page 148 undefined
+pm_EnsembleSpaces.tex:1898: warning: Reference `mdf@pagelabel-59' on page 149 undefined
+pm_EnsembleSpaces.tex:1898: warning: Reference `mdf@pagelabel-60' on page 150 undefined
+pm_EnsembleSpaces.tex:1956: warning: Reference `mdf@pagelabel-61' on page 150 undefined
+pm_EnsembleSpaces.tex:1956: warning: Reference `mdf@pagelabel-62' on page 151 undefined
+pm_EnsembleSpaces.tex:2025: warning: Reference `pm-es-mixingEntropyMonotonic' on page 151 undefined
+pm_EnsembleSpaces.tex:2029: warning: Reference `mdf@pagelabel-63' on page 151 undefined
+pm_EnsembleSpaces.tex:2029: warning: Reference `mdf@pagelabel-64' on page 152 undefined
+pm_EnsembleSpaces.tex:2158: warning: Reference `mdf@pagelabel-65' on page 154 undefined
+pm_EnsembleSpaces.tex:2158: warning: Reference `mdf@pagelabel-66' on page 155 undefined
+pm_EnsembleSpaces.tex: warning: Underfull \vbox (badness 10000) while \output is active (page 155)
+pm_EnsembleSpaces.tex:2281: warning: Reference `mdf@pagelabel-67' on page 156 undefined
+pm_EnsembleSpaces.tex:2281: warning: Reference `mdf@pagelabel-68' on page 157 undefined
+pm_EnsembleSpaces.tex:2281: warning: Reference `mdf@pagelabel-69' on page 158 undefined
+pm_EnsembleSpaces.tex:2335: warning: Reference `mdf@pagelabel-70' on page 159 undefined
+pm_EnsembleSpaces.tex:2335: warning: Reference `mdf@pagelabel-71' on page 160 undefined
+pm_EnsembleSpaces.tex:2353: warning: Reference `pm-es-convexSupremumContinuous' on page 160 undefined
+pm_EnsembleSpaces.tex:2352: warning: Overfull \hbox (3.95546pt too wide) (page 160)
+pm_EnsembleSpaces.tex:2368: warning: Reference `pm-es-convexSupremumProps' on page 160 undefined
+pm_EnsembleSpaces.tex:2370: warning: Reference `pm-es-convexSupremumProps' on page 160 undefined
+pm_EnsembleSpaces.tex:2372: warning: Reference `pm-es-exponentialEntropySubadditivity' on page 160 undefined
+pm_EnsembleSpaces.tex:2374: warning: Reference `pm-es-exponentialEntropySubadditivity' on page 160 undefined
+pm_EnsembleSpaces.tex:2376: warning: Reference `pm-es-convexSupremumProps' on page 160 undefined
+pm_EnsembleSpaces.tex:2383: warning: Reference `mdf@pagelabel-72' on page 160 undefined
+pm_EnsembleSpaces.tex:2383: warning: Reference `mdf@pagelabel-73' on page 161 undefined
+pm_EnsembleSpaces.tex:2388: warning: Overfull \hbox (3.61673pt too wide) (page 161)
+pm_EnsembleSpaces.tex:2419: warning: Reference `mdf@pagelabel-74' on page 161 undefined
+pm_EnsembleSpaces.tex:2419: warning: Reference `mdf@pagelabel-75' on page 162 undefined
+pm_EnsembleSpaces.tex: warning: `h' float specifier changed to `ht'
+pm_EnsembleSpaces.tex:2462: warning: Reference `pm-es-fig-fraction' on page 162 undefined
+pm_EnsembleSpaces.tex:2511: warning: Reference `mdf@pagelabel-76' on page 163 undefined
+pm_EnsembleSpaces.tex:2537: warning: Reference `pm-es-fig-fractionDiscontinuous' on page 163 undefined
+pm_EnsembleSpaces.tex: warning: `h' float specifier changed to `ht'
+pm_EnsembleSpaces.tex:2575: warning: Reference `pm-es-fig-fractionCapacity' on page 163 undefined
+pm_EnsembleSpaces.tex:2589: warning: Reference `pm-es-fig-fractionDiscontinuous' on page 164 undefined
+pm_EnsembleSpaces.tex:2613: warning: Reference `pm-es-convexSupremumProps' on page 164 undefined
+pm_EnsembleSpaces.tex:2615: warning: Reference `pm-es-convexSupremumProps' on page 164 undefined
+pm_EnsembleSpaces.tex:2619: warning: Reference `pm-es-convexSupremumProps' on page 164 undefined
+pm_EnsembleSpaces.tex:2627: warning: Reference `mdf@pagelabel-77' on page 164 undefined
+pm_EnsembleSpaces.tex:2627: warning: Reference `mdf@pagelabel-78' on page 165 undefined
+pm_EnsembleSpaces.tex:2632: warning: Overfull \hbox (5.6414pt too wide) (page 165)
+pm_EnsembleSpaces.tex:2711: warning: Reference `mdf@pagelabel-79' on page 166 undefined
+pm_EnsembleSpaces.tex:2725: warning: Reference `mdf@pagelabel-80' on page 166 undefined
+pm_EnsembleSpaces.tex:2725: warning: Reference `mdf@pagelabel-81' on page 167 undefined
+pm_EnsembleSpaces.tex:2760: warning: Reference `mdf@pagelabel-82' on page 167 undefined
+pm_EnsembleSpaces.tex:2760: warning: Reference `mdf@pagelabel-83' on page 168 undefined
+pm_EnsembleSpaces.tex:2772: warning: Reference `mdf@pagelabel-84' on page 168 undefined
+pm_EnsembleSpaces.tex:2788: warning: Reference `mdf@pagelabel-85' on page 168 undefined
+pm_EnsembleSpaces.tex:2801: warning: Reference `mdf@pagelabel-86' on page 169 undefined
+pm_EnsembleSpaces.tex:2847: warning: Reference `mdf@pagelabel-87' on page 169 undefined
+pm_EnsembleSpaces.tex:2847: warning: Reference `mdf@pagelabel-88' on page 170 undefined
+pm_EnsembleSpaces.tex: warning: Underfull \vbox (badness 10000) while \output is active (page 170)
+pm_EnsembleSpaces.tex:2877: warning: Reference `mdf@pagelabel-89' on page 171 undefined
+pm_EnsembleSpaces.tex:2892: warning: Reference `mdf@pagelabel-90' on page 172 undefined
+pm_EnsembleSpaces.tex:2898: warning: Reference `mdf@pagelabel-91' on page 172 undefined
+pm_EnsembleSpaces.tex:2917: warning: Reference `mdf@pagelabel-92' on page 173 undefined
+pm_EnsembleSpaces.tex:2932: warning: Reference `pm-es-ChoquetUniqueness' on page 173 undefined
+pm_EnsembleSpaces.tex:2934: warning: Reference `pm-es-fractionSupChoquet' on page 173 undefined
+pm_EnsembleSpaces.tex:2934: warning: Reference `pm-es-ChoquetExistence' on page 173 undefined
+pm_EnsembleSpaces.tex:2936: warning: Reference `mdf@pagelabel-93' on page 173 undefined
+pm_EnsembleSpaces.tex:2936: warning: Reference `mdf@pagelabel-94' on page 174 undefined
+pm_EnsembleSpaces.tex:2946: warning: Reference `mdf@pagelabel-95' on page 174 undefined
+pm_EnsembleSpaces.tex:2958: warning: Reference `mdf@pagelabel-96' on page 174 undefined
+pm_EnsembleSpaces.tex:2994: warning: Reference `mdf@pagelabel-97' on page 174 undefined
+pm_EnsembleSpaces.tex:2994: warning: Reference `mdf@pagelabel-98' on page 175 undefined
+pm_EnsembleSpaces.tex:3056: warning: Reference `mdf@pagelabel-99' on page 176 undefined
+pm_EnsembleSpaces.tex:3056: warning: Reference `mdf@pagelabel-100' on page 177 undefined
+pm_EnsembleSpaces.tex:3077: warning: Reference `mdf@pagelabel-101' on page 177 undefined
+pm_EnsembleSpaces.tex:3090: warning: Reference `pm-es-rComplProps' on page 177 undefined
+pm_EnsembleSpaces.tex:3096: warning: Reference `pm-es-symirreflproperties' on page 177 undefined
+pm_EnsembleSpaces.tex:3109: warning: Reference `pm-es-rComplProps' on page 177 undefined
+pm_EnsembleSpaces.tex:3110: warning: Reference `pm-es-symirreflproperties' on page 177 undefined
+pm_EnsembleSpaces.tex:3110: warning: Reference `pm-es-rComplProps' on page 177 undefined
+pm_EnsembleSpaces.tex:3110: warning: Reference `pm-es-symirreflproperties' on page 177 undefined
+pm_EnsembleSpaces.tex:3136: warning: Reference `pm-es-rComplProps' on page 177 undefined
+pm_EnsembleSpaces.tex:3138: warning: Reference `pm-es-rComplProps' on page 177 undefined
+pm_EnsembleSpaces.tex:3140: warning: Reference `pm-es-rComplProps' on page 177 undefined
+pm_EnsembleSpaces.tex:3152: warning: Reference `pm-es-subspaceClosure' on page 177 undefined
+pm_EnsembleSpaces.tex:3154: warning: Reference `pm-es-rComplProps' on page 177 undefined
+pm_EnsembleSpaces.tex:3156: warning: Reference `mdf@pagelabel-102' on page 177 undefined
+pm_EnsembleSpaces.tex:3156: warning: Reference `mdf@pagelabel-103' on page 178 undefined
+pm_EnsembleSpaces.tex:3156: warning: Reference `mdf@pagelabel-104' on page 179 undefined
+pm_EnsembleSpaces.tex:3177: warning: Reference `mdf@pagelabel-105' on page 179 undefined
+pm_EnsembleSpaces.tex:3187: warning: Reference `mdf@pagelabel-106' on page 179 undefined
+pm_EnsembleSpaces.tex:3201: warning: Reference `mdf@pagelabel-107' on page 179 undefined
+pm_EnsembleSpaces.tex:3201: warning: Reference `mdf@pagelabel-108' on page 180 undefined
+pm_EnsembleSpaces.tex:3217: warning: Reference `mdf@pagelabel-109' on page 180 undefined
+pm_EnsembleSpaces.tex:3221: warning: Reference `pm-es-cutTriangle' on page 180 undefined
+pm_EnsembleSpaces.tex:3221: warning: Reference `pm-es-fig-cutTriangleOrthoSubspaces' on page 180 undefined
+pm_EnsembleSpaces.tex: warning: Underfull \vbox (badness 10000) while \output is active (page 180)
+pm_EnsembleSpaces.tex:3520: warning: Underfull \hbox (badness 10000) (page 188)
+pm_EnsembleSpaces.tex:3524: warning: Underfull \hbox (badness 10000) (page 188)
+pm_EnsembleSpaces.tex: warning: Underfull \vbox (badness 6461) while \output is active (page 188)
+pm_EnsembleSpaces.tex:3652: warning: Reference `pm-es-separateExtendsMixtures' on page 192 undefined
+pm_EnsembleSpaces.tex:3867: warning: Reference `pm-es-nonZeroMeasureOnBoundaries' on page 199 undefined
+pm_EnsembleSpaces.tex:3916: warning: Reference `mdf@pagelabel-110' on page 200 undefined
+pm_EnsembleSpaces.tex:3916: warning: Reference `mdf@pagelabel-111' on page 201 undefined
+pm_EnsembleSpaces.tex:4109: warning: Reference `pm-es-subspacesContainHulls' on page 205 undefined
+pm_EnsembleSpaces.tex:4109: warning: Reference `pm-es-hullProp' on page 205 undefined
+pm_EnsembleSpaces.tex:4166: warning: Reference `pm-es-subspacesContainHulls' on page 206 undefined
+/tmp/downloads/tmp_21/book.tex:318: warning: Reference `fig_quantum_diagram' on page 215 undefined
+/tmp/downloads/tmp_21/book.tex: warning: `h' float specifier changed to `ht'
+/tmp/downloads/tmp_21/book.tex: warning: Underfull \vbox (badness 10000) while \output is active (page 216)
+/tmp/downloads/tmp_21/book.tex:391: warning: Reference `assum_detrev' on page 218 undefined
+/tmp/downloads/tmp_21/book.tex:432: warning: Reference `sec:general_theory_extensions' on page 221 undefined
+/tmp/downloads/tmp_21/book.tex: warning: Underfull \vbox (badness 10000) while \output is active (page 226)
+/tmp/downloads/tmp_21/book.tex:612: warning: Reference `pm-vs-defTheoreticalDomain' on page 227 undefined
+/tmp/downloads/tmp_21/book.tex:612: warning: Reference `pm-vs-defPossibilities' on page 227 undefined
+/tmp/downloads/tmp_21/book.tex:612: warning: Reference `pm-cd-experimentalRelationshipTheorem' on page 227 undefined
+/tmp/downloads/tmp_21/book.tex:612: warning: Reference `pm-pq-domainOrderingTheorem' on page 227 undefined
+/tmp/downloads/tmp_21/book.tex:618: warning: Reference `pm-cd-relationshipDomainIsContinuousFunctions' on page 228 undefined
+rp_QuantumMechanics.tex:9: error: Command \openproblem already defined
+      at ...l{[Tags: Tag1, Tag2]}}{\end{openproblemth}}
+rp_QuantumMechanics.tex:17: warning: Underfull \hbox (badness 10000) (page 231)
+rp_QuantumMechanics.tex:18: error: \begin{openproblem} on input line 16 ended by \end{openproblemth}
+      at \end{openproblem}
+rp_QuantumMechanics.tex:18: error: \begin{document} ended by \end{openproblem}
+      at \end{openproblem}
+rp_QuantumMechanics.tex:18: error: Extra \endgroup
+      at <recently read> \endgroup
+    from \end{openproblem}
+rp_QuantumMechanics.tex:407: warning: Reference `rp-qm-geometricDiagonalization' on page 242 undefined
+rp_QuantumMechanics.tex: warning: Underfull \vbox (badness 1242) while \output is active (page 242)
+rp_QuantumMechanics.tex:453: warning: Reference `fig_rp_qm_entropyVsProb' on page 243 undefined
+rp_QuantumMechanics.tex:517: warning: Reference `rp-qm-uev-condSchroedingerEq' on page 244 undefined
+rp_QuantumMechanics.tex:533: warning: Reference `rp-qm-uev-condUnitaryEvolution' on page 244 undefined
+rp_QuantumMechanics.tex:555: warning: Reference `rp-qm-uev-condInnerProductPreserved' on page 245 undefined
+/tmp/downloads/tmp_21/book.tex: warning: extra `)' in log; file names may be wrong 
+/tmp/downloads/tmp_21/book.tex:645: warning: Reference `rp-qm-uev-condSchroedingerEq' on page 247 undefined
+/tmp/downloads/tmp_21/book.tex:663: warning: Reference `rp-qm-uev-condSchroedingerEq' on page 248 undefined
+/tmp/downloads/tmp_21/book.tex:682: warning: Reference `rp-qm-uev-condDetRev' on page 249 undefined
+/tmp/downloads/tmp_21/book.tex:696: warning: Overfull \hbox (8.16557pt too wide) (page 249)
+/tmp/downloads/tmp_21/book.tex:916: warning: Reference `eq:schauder' on page 256 undefined
+/tmp/downloads/tmp_21/book.tex: warning: extra `)' in log; file names may be wrong 
+/tmp/downloads/tmp_21/book.tex:817: warning: Overfull \hbox (35.99998pt too wide) (page 261)
+/tmp/downloads/tmp_21/book.tex:857: warning: Overfull \hbox (52.99998pt too wide) (page 261)
+/tmp/downloads/tmp_21/book.tex: warning: Underfull \vbox (badness 10000) while \output is active (page 261)
+/tmp/downloads/tmp_21/book.tex:878: warning: Overfull \hbox (23.99998pt too wide) (page 263)
+/tmp/downloads/tmp_21/book.tex: warning: Label(s) may have changed. Rerun to get cross-references right
+/tmp/downloads/tmp_21/book.tex: warning: extra `)' in log; file names may be wrong 
+/tmp/downloads/tmp_21/book.tex: warning: [pdfTeX] pdflatex (file /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb): glyph `' undefined
+/tmp/downloads/tmp_21/book.tex: warning: [pdfTeX] pdflatex (file /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb): glyph `p ' undefined
+/tmp/downloads/tmp_21/book.tex: warning: [pdfTeX] pdflatex (file /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb): glyph `' undefined
+/tmp/downloads/tmp_21/book.tex: warning: [pdfTeX] pdflatex (file /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb): glyph `four ' undefined
+/tmp/downloads/tmp_21/book.tex: warning: [pdfTeX] pdflatex (file /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb): glyph `six ' undefined
+/tmp/downloads/tmp_21/book.tex: warning: [pdfTeX] pdflatex (file /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb): glyph `two ' undefined
+/tmp/downloads/tmp_21/book.tex: warning: [pdfTeX] pdflatex (file /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb): glyph `' undefined
+There were errors; /tmp/storage/compilation_21/output.pdf not updated
