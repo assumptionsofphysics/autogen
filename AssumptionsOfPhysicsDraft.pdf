@@ -1,6 +1,6 @@
-pdflatex -interaction nonstopmode -recorder -output-directory latex.out /tmp/downloads/tmp_7829/book.tex
-/tmp/downloads/tmp_7829/book.tex: warning: [pgfplots] running in backwards compatibility mode (unsuitable tick labels; missing features). Consider writing \pgfplotsset{compat=1.14} into your preamble
-/tmp/downloads/tmp_7829/book.tex:104: warning: Overfull \hbox (34.60373pt too wide) (page 5)
+pdflatex -interaction nonstopmode -recorder -output-directory latex.out /tmp/downloads/tmp_7841/book.tex
+/tmp/downloads/tmp_7841/book.tex: warning: [pgfplots] running in backwards compatibility mode (unsuitable tick labels; missing features). Consider writing \pgfplotsset{compat=1.14} into your preamble
+/tmp/downloads/tmp_7841/book.tex:104: warning: Overfull \hbox (34.60373pt too wide) (page 5)
 reverse-classical-mechanics.tex:84: warning: Reference `rp-cm-EulerLagrange' on page 8 undefined
 reverse-classical-mechanics.tex:91: warning: Reference `rp-cm-EulerLagrange' on page 9 undefined
 reverse-classical-mechanics.tex: warning: Underfull \vbox (badness 2376) while \output is active (page 10)
@@ -266,49 +266,49 @@ reverse-classical-mechanics.tex:2629: warning: Reference `assum_indep' on page 8
 reverse-classical-mechanics.tex:2629: warning: Reference `assum_kineq' on page 81 undefined
 reverse-classical-mechanics.tex:2631: warning: Reference `rp-cm-fke-condUnits' on page 81 undefined
 reverse-classical-mechanics.tex:2631: warning: Reference `rp-cm-fke-condInertial' on page 81 undefined
-/tmp/downloads/tmp_7829/book.tex:2870: warning: Reference `assum_indep' on page 91 undefined
-/tmp/downloads/tmp_7829/book.tex:2870: warning: Reference `rp-cm-ir-condDistributionOverPhaseSpace' on page 91 undefined
-/tmp/downloads/tmp_7829/book.tex:2872: warning: Reference `rp-cm-ir-condDistributionOverPhaseSpace' on page 91 undefined
-/tmp/downloads/tmp_7829/book.tex:2872: warning: Reference `rp-cm-ir-condMadeOfInfinitesimalParts' on page 91 undefined
-/tmp/downloads/tmp_7829/book.tex:2878: warning: Reference `assum_infirr' on page 91 undefined
-/tmp/downloads/tmp_7829/book.tex:2878: warning: Reference `assum_infirr' on page 91 undefined
-/tmp/downloads/tmp_7829/book.tex:2878: warning: Reference `assum_indep' on page 91 undefined
-/tmp/downloads/tmp_7829/book.tex:2878: warning: Reference `assum_detrev' on page 91 undefined
-/tmp/downloads/tmp_7829/book.tex:2878: warning: Reference `assum_infirr' on page 91 undefined
-/tmp/downloads/tmp_7829/book.tex:2878: warning: Reference `assum_indep' on page 91 undefined
-/tmp/downloads/tmp_7829/book.tex:2878: warning: Reference `assum_kineq' on page 91 undefined
-/tmp/downloads/tmp_7829/book.tex:2878: warning: Reference `assum_infirr' on page 91 undefined
-/tmp/downloads/tmp_7829/book.tex:2878: warning: Reference `assum_indep' on page 91 undefined
-/tmp/downloads/tmp_7829/book.tex:2878: warning: Reference `assum_detrev' on page 91 undefined
-/tmp/downloads/tmp_7829/book.tex:2878: warning: Reference `assum_kineq' on page 91 undefined
-/tmp/downloads/tmp_7829/book.tex:2945: warning: Reference `rp-cm-classicalUncertaintyPrinciple' on page 93 undefined
-/tmp/downloads/tmp_7829/book.tex:2958: warning: Reference `assum_infirr' on page 94 undefined
-/tmp/downloads/tmp_7829/book.tex:2960: warning: Reference `assum_indep' on page 94 undefined
-/tmp/downloads/tmp_7829/book.tex:2963: warning: Reference `assum_kineq' on page 94 undefined
-/tmp/downloads/tmp_7829/book.tex:2966: warning: Reference `assum_detrev' on page 94 undefined
-/tmp/downloads/tmp_7829/book.tex:2968: warning: Reference `assum_kineq' on page 94 undefined
-/tmp/downloads/tmp_7829/book.tex:2968: warning: Reference `assum_detrev' on page 94 undefined
-/tmp/downloads/tmp_7829/book.tex:2972: warning: Reference `assum_infirr' on page 94 undefined
-/tmp/downloads/tmp_7829/book.tex:2974: warning: Reference `assum_indep' on page 94 undefined
-/tmp/downloads/tmp_7829/book.tex:2976: warning: Reference `assum_detrev' on page 95 undefined
-/tmp/downloads/tmp_7829/book.tex:2978: warning: Reference `assum_kineq' on page 95 undefined
-/tmp/downloads/tmp_7829/book.tex:2978: warning: Reference `assum_detrev' on page 95 undefined
-/tmp/downloads/tmp_7829/book.tex:2980: warning: Reference `assum_detrev' on page 96 undefined
-/tmp/downloads/tmp_7829/book.tex:2980: warning: Reference `assum_kineq' on page 96 undefined
-/tmp/downloads/tmp_7829/book.tex:2992: warning: Underfull \hbox (badness 10000) (page 97)
-/tmp/downloads/tmp_7829/book.tex:3024: warning: [hyperref] Token not allowed in a PDF string (PDFDocEncoding): removing `math shift'
-/tmp/downloads/tmp_7829/book.tex:3024: warning: [hyperref] Token not allowed in a PDF string (PDFDocEncoding): removing `subscript'
-/tmp/downloads/tmp_7829/book.tex:3024: warning: [hyperref] Token not allowed in a PDF string (PDFDocEncoding): removing `\alpha'
-/tmp/downloads/tmp_7829/book.tex:3024: warning: [hyperref] Token not allowed in a PDF string (PDFDocEncoding): removing `\beta'
-/tmp/downloads/tmp_7829/book.tex:3024: warning: [hyperref] Token not allowed in a PDF string (PDFDocEncoding): removing `\gamma'
-/tmp/downloads/tmp_7829/book.tex:3024: warning: [hyperref] Token not allowed in a PDF string (PDFDocEncoding): removing `math shift'
-/tmp/downloads/tmp_7829/book.tex:3024: warning: Reference `rp-cm-emTensorAndInertialPseudotensor' on page 98 undefined
-/tmp/downloads/tmp_7829/book.tex:3038: warning: Reference `rp-cm-emHamiltonianConstraintDerivation' on page 98 undefined
-/tmp/downloads/tmp_7829/book.tex:3072: warning: Reference `rp-cm-secDirectionDOF' on page 99 undefined
-/tmp/downloads/tmp_7829/book.tex: warning: [memoir] The material used in the headers is too large
-/tmp/downloads/tmp_7829/book.tex: warning: Overfull \vbox (13.59999pt too high) while \output is active (page 99)
-/tmp/downloads/tmp_7829/book.tex:3096: warning: Overfull \hbox (2.66489pt too wide) (page 100)
-/tmp/downloads/tmp_7829/book.tex: warning: Overfull \vbox (13.59999pt too high) while \output is active (page 101)
+/tmp/downloads/tmp_7841/book.tex:2870: warning: Reference `assum_indep' on page 91 undefined
+/tmp/downloads/tmp_7841/book.tex:2870: warning: Reference `rp-cm-ir-condDistributionOverPhaseSpace' on page 91 undefined
+/tmp/downloads/tmp_7841/book.tex:2872: warning: Reference `rp-cm-ir-condDistributionOverPhaseSpace' on page 91 undefined
+/tmp/downloads/tmp_7841/book.tex:2872: warning: Reference `rp-cm-ir-condMadeOfInfinitesimalParts' on page 91 undefined
+/tmp/downloads/tmp_7841/book.tex:2878: warning: Reference `assum_infirr' on page 91 undefined
+/tmp/downloads/tmp_7841/book.tex:2878: warning: Reference `assum_infirr' on page 91 undefined
+/tmp/downloads/tmp_7841/book.tex:2878: warning: Reference `assum_indep' on page 91 undefined
+/tmp/downloads/tmp_7841/book.tex:2878: warning: Reference `assum_detrev' on page 91 undefined
+/tmp/downloads/tmp_7841/book.tex:2878: warning: Reference `assum_infirr' on page 91 undefined
+/tmp/downloads/tmp_7841/book.tex:2878: warning: Reference `assum_indep' on page 91 undefined
+/tmp/downloads/tmp_7841/book.tex:2878: warning: Reference `assum_kineq' on page 91 undefined
+/tmp/downloads/tmp_7841/book.tex:2878: warning: Reference `assum_infirr' on page 91 undefined
+/tmp/downloads/tmp_7841/book.tex:2878: warning: Reference `assum_indep' on page 91 undefined
+/tmp/downloads/tmp_7841/book.tex:2878: warning: Reference `assum_detrev' on page 91 undefined
+/tmp/downloads/tmp_7841/book.tex:2878: warning: Reference `assum_kineq' on page 91 undefined
+/tmp/downloads/tmp_7841/book.tex:2945: warning: Reference `rp-cm-classicalUncertaintyPrinciple' on page 93 undefined
+/tmp/downloads/tmp_7841/book.tex:2958: warning: Reference `assum_infirr' on page 94 undefined
+/tmp/downloads/tmp_7841/book.tex:2960: warning: Reference `assum_indep' on page 94 undefined
+/tmp/downloads/tmp_7841/book.tex:2963: warning: Reference `assum_kineq' on page 94 undefined
+/tmp/downloads/tmp_7841/book.tex:2966: warning: Reference `assum_detrev' on page 94 undefined
+/tmp/downloads/tmp_7841/book.tex:2968: warning: Reference `assum_kineq' on page 94 undefined
+/tmp/downloads/tmp_7841/book.tex:2968: warning: Reference `assum_detrev' on page 94 undefined
+/tmp/downloads/tmp_7841/book.tex:2972: warning: Reference `assum_infirr' on page 94 undefined
+/tmp/downloads/tmp_7841/book.tex:2974: warning: Reference `assum_indep' on page 94 undefined
+/tmp/downloads/tmp_7841/book.tex:2976: warning: Reference `assum_detrev' on page 95 undefined
+/tmp/downloads/tmp_7841/book.tex:2978: warning: Reference `assum_kineq' on page 95 undefined
+/tmp/downloads/tmp_7841/book.tex:2978: warning: Reference `assum_detrev' on page 95 undefined
+/tmp/downloads/tmp_7841/book.tex:2980: warning: Reference `assum_detrev' on page 96 undefined
+/tmp/downloads/tmp_7841/book.tex:2980: warning: Reference `assum_kineq' on page 96 undefined
+/tmp/downloads/tmp_7841/book.tex:2992: warning: Underfull \hbox (badness 10000) (page 97)
+/tmp/downloads/tmp_7841/book.tex:3024: warning: [hyperref] Token not allowed in a PDF string (PDFDocEncoding): removing `math shift'
+/tmp/downloads/tmp_7841/book.tex:3024: warning: [hyperref] Token not allowed in a PDF string (PDFDocEncoding): removing `subscript'
+/tmp/downloads/tmp_7841/book.tex:3024: warning: [hyperref] Token not allowed in a PDF string (PDFDocEncoding): removing `\alpha'
+/tmp/downloads/tmp_7841/book.tex:3024: warning: [hyperref] Token not allowed in a PDF string (PDFDocEncoding): removing `\beta'
+/tmp/downloads/tmp_7841/book.tex:3024: warning: [hyperref] Token not allowed in a PDF string (PDFDocEncoding): removing `\gamma'
+/tmp/downloads/tmp_7841/book.tex:3024: warning: [hyperref] Token not allowed in a PDF string (PDFDocEncoding): removing `math shift'
+/tmp/downloads/tmp_7841/book.tex:3024: warning: Reference `rp-cm-emTensorAndInertialPseudotensor' on page 98 undefined
+/tmp/downloads/tmp_7841/book.tex:3038: warning: Reference `rp-cm-emHamiltonianConstraintDerivation' on page 98 undefined
+/tmp/downloads/tmp_7841/book.tex:3072: warning: Reference `rp-cm-secDirectionDOF' on page 99 undefined
+/tmp/downloads/tmp_7841/book.tex: warning: [memoir] The material used in the headers is too large
+/tmp/downloads/tmp_7841/book.tex: warning: Overfull \vbox (13.59999pt too high) while \output is active (page 99)
+/tmp/downloads/tmp_7841/book.tex:3096: warning: Overfull \hbox (2.66489pt too wide) (page 100)
+/tmp/downloads/tmp_7841/book.tex: warning: Overfull \vbox (13.59999pt too high) while \output is active (page 101)
 pm_VerifiableStatements.tex:22: warning: Reference `mdf@pagelabel-1' on page 108 undefined
 pm_VerifiableStatements.tex:57: warning: Reference `mdf@pagelabel-2' on page 108 undefined
 pm_VerifiableStatements.tex:57: warning: Reference `mdf@pagelabel-3' on page 109 undefined
@@ -709,17 +709,17 @@ pm_EnsembleSpaces.tex:3946: warning: Reference `mdf@pagelabel-216' on page 303 u
 pm_EnsembleSpaces.tex:3946: warning: Reference `mdf@pagelabel-217' on page 304 undefined
 pm_EnsembleSpaces.tex:4135: warning: Reference `pm-es-subspacesContainHulls' on page 308 undefined
 pm_EnsembleSpaces.tex:4135: warning: Reference `pm-es-hullProp' on page 308 undefined
-/tmp/downloads/tmp_7829/book.tex:318: warning: Reference `fig_quantum_diagram' on page 317 undefined
-/tmp/downloads/tmp_7829/book.tex: warning: `h' float specifier changed to `ht'
-/tmp/downloads/tmp_7829/book.tex: warning: Underfull \vbox (badness 10000) while \output is active (page 318)
-/tmp/downloads/tmp_7829/book.tex:391: warning: Reference `assum_detrev' on page 320 undefined
-/tmp/downloads/tmp_7829/book.tex:432: warning: Reference `sec:general_theory_extensions' on page 323 undefined
-/tmp/downloads/tmp_7829/book.tex: warning: Underfull \vbox (badness 10000) while \output is active (page 328)
-/tmp/downloads/tmp_7829/book.tex:612: warning: Reference `pm-vs-defTheoreticalDomain' on page 329 undefined
-/tmp/downloads/tmp_7829/book.tex:612: warning: Reference `pm-vs-defPossibilities' on page 329 undefined
-/tmp/downloads/tmp_7829/book.tex:612: warning: Reference `pm-cd-experimentalRelationshipTheorem' on page 329 undefined
-/tmp/downloads/tmp_7829/book.tex:612: warning: Reference `pm-pq-domainOrderingTheorem' on page 329 undefined
-/tmp/downloads/tmp_7829/book.tex:618: warning: Reference `pm-cd-relationshipDomainIsContinuousFunctions' on page 330 undefined
+/tmp/downloads/tmp_7841/book.tex:318: warning: Reference `fig_quantum_diagram' on page 317 undefined
+/tmp/downloads/tmp_7841/book.tex: warning: `h' float specifier changed to `ht'
+/tmp/downloads/tmp_7841/book.tex: warning: Underfull \vbox (badness 10000) while \output is active (page 318)
+/tmp/downloads/tmp_7841/book.tex:391: warning: Reference `assum_detrev' on page 320 undefined
+/tmp/downloads/tmp_7841/book.tex:432: warning: Reference `sec:general_theory_extensions' on page 323 undefined
+/tmp/downloads/tmp_7841/book.tex: warning: Underfull \vbox (badness 10000) while \output is active (page 328)
+/tmp/downloads/tmp_7841/book.tex:612: warning: Reference `pm-vs-defTheoreticalDomain' on page 329 undefined
+/tmp/downloads/tmp_7841/book.tex:612: warning: Reference `pm-vs-defPossibilities' on page 329 undefined
+/tmp/downloads/tmp_7841/book.tex:612: warning: Reference `pm-cd-experimentalRelationshipTheorem' on page 329 undefined
+/tmp/downloads/tmp_7841/book.tex:612: warning: Reference `pm-pq-domainOrderingTheorem' on page 329 undefined
+/tmp/downloads/tmp_7841/book.tex:618: warning: Reference `pm-cd-relationshipDomainIsContinuousFunctions' on page 330 undefined
 rp_QuantumMechanics.tex: warning: Underfull \vbox (badness 1275) while \output is active (page 343)
 rp_QuantumMechanics.tex:399: warning: Reference `rp-qm-geometricDiagonalization' on page 344 undefined
 rp_QuantumMechanics.tex:445: warning: Reference `fig_rp_qm_entropyVsProb' on page 345 undefined
@@ -737,4 +737,4 @@ rp_QuantumMechanics.tex: warning: [pdfTeX] pdflatex (file /usr/share/texlive/tex
 rp_QuantumMechanics.tex: warning: [pdfTeX] pdflatex (file /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb): glyph `six ' undefined
 rp_QuantumMechanics.tex: warning: [pdfTeX] pdflatex (file /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb): glyph `two ' undefined
 rp_QuantumMechanics.tex: warning: [pdfTeX] pdflatex (file /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb): glyph `' undefined
-There were errors; /tmp/storage/compilation_4108/output.pdf not updated
+There were errors; /tmp/storage/compilation_4120/output.pdf not updated
